@@ -1,13 +1,13 @@
 const assert = require('assert');
 const async = require('async');
 const AWS = require('aws-sdk');
-const withV4 = require('../support/withV4');
-const BucketUtility = require('../../lib/utility/bucket-util');
-const constants = require('../../../../../constants');
-const { config } = require('../../../../../lib/Config');
-const { getRealAwsConfig } = require('../support/awsConfig');
+const withV4 = require('../../support/withV4');
+const BucketUtility = require('../../../lib/utility/bucket-util');
+const constants = require('../../../../../../constants');
+const { config } = require('../../../../../../lib/Config');
+const { getRealAwsConfig } = require('../../support/awsConfig');
 const { createEncryptedBucketPromise } =
-    require('../../lib/utility/createEncryptedBucket');
+    require('../../../lib/utility/createEncryptedBucket');
 
 const awsLocation = 'aws-test';
 const bucket = 'buckettestmultiplebackendobjectcopy';
