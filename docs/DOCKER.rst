@@ -69,7 +69,6 @@ the authData.json file.
 
 Sample command for mounting all custom files:
 .. code:: shell
-
     docker run --name s3server -p 8000:8000
     -v $(pwd)/locationConfig.json:/usr/src/app/locationConfig.json
     -v $(pwd)/authdata.json:/usr/src/app/conf/authdata.json
@@ -78,7 +77,6 @@ Sample command for mounting all custom files:
 Sample command for setting Zenko Cloudserver credentials as environment variables
 at run time (see `this section <#scality-access-key-id-and-scality-secret-access-key>`__):
 .. code:: shell
-
     docker run --name s3server -p 8000:8000
     -v $(pwd)/locationConfig.json:/usr/src/app/locationConfig.json
     -v ~/.aws/credentials:/root/.aws/credentials 
