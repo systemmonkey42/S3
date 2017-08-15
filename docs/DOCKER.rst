@@ -23,21 +23,21 @@ environment variables on the docker run command line.
 Environment Variables
 ~~~~~~~~~~~~~~~~~~~~~
 
-S3DATA=multiple
-^^^^^^^^^^^^^^^
+S3DATA
+^^^^^^
+S3DATA=multiple and S3DATA=scality
+""""""""""""""""""""""""""""""""""
+Either of these runs Scality Zenko CloudServer with multiple data backends. The
+scality value refers to installations with a RING as one of the backends.
+When using multiple data backends, a custom locationConfig.json file is
+mandatory. It will provide custom regions and associated rest_endpoints
+configuration `More info <../GETTING_STARTED/#location-configuration>`__
 
-This runs Scality Zenko CloudServer with multiple data backends. `More
-info <../GETTING_STARTED/#location-configuration>`__
-
-.. code:: shell
-
-    docker run -d --name s3server -p 8000:8000 -e S3DATA=multiple scality/s3server
-
-For running an S3 AWS backend, you will have to add a new section
+For running with an S3 AWS backend, you will have to add a new section
 (with the ``aws_s3`` location type) to your ``locationConfig.json`` file:
 
 .. code:: json
-
+(...)
     "aws-test": {
         "type": "aws_s3",
         "details": {
@@ -47,16 +47,53 @@ For running an S3 AWS backend, you will have to add a new section
             "credentialsProfile": "default"
         }
     }
+(...)
 
-You will also have to mount your AWS credentials file:
+If you are using other endpoints, such as RING endpoints, please refer to your
+customer documentation.
+
+You will also have to edit your AWS credentials file to be able to use your
+command line tool of choice. This file should only state credentials for S3 AWS
+hosted data, not for your Zenko Cloudserver hosted data.
+As for your locationConfig.json, you will need to mount your AWS credentials
+file at run time:
 ``-v ~/.aws/credentials:/root/.aws/credentials`` on Linux, OS X, or Unix or
 ``-v C:\Users\USERNAME\.aws\credential:/root/.aws/credentials`` on Windows
 
+Should you wish to use custom credentials with your local Zenko Cloudserver
+S3 store, you can set them at container launch by exporting them, or by mounting
+a custom authdata.json file along with you credentials and your location
+configuration. Please note that exporting environment variables for your
+authentication with Zenko Cloudserver will override any auth info present in
+the authData.json file.
+
+Sample command for mounting all custom files:
 .. code:: shell
 
     docker run --name s3server -p 8000:8000
     -v $(pwd)/locationConfig.json:/usr/src/app/locationConfig.json
+    -v $(pwd)/authdata.json:/usr/src/app/conf/authdata.json
     -v ~/.aws/credentials:/root/.aws/credentials -e S3DATA=multiple scality/s3server
+
+Sample command for setting Zenko Cloudserver credentials as environment variables
+at run time (see `this section <#scality-access-key-id-and-scality-secret-access-key>`__):
+.. code:: shell
+
+    docker run --name s3server -p 8000:8000
+    -v $(pwd)/locationConfig.json:/usr/src/app/locationConfig.json
+    -v ~/.aws/credentials:/root/.aws/credentials 
+    -e SCALITY_ACCESS_KEY_ID=accessKey1
+    -e SCALITY_SECRET_ACCESS_KEY=verySecretKey1 -e S3DATA=multiple scality/s3server
+
+S3DATA=file
+"""""""""""
+When storing file data, for it to be persistent you must mount docker volumes
+for both data and metadata. See `this section <#using-docker-volumes-in-production>`__
+
+S3DATA=mem
+"""""""""""
+This is ideal for testing - no data will remain after container is shutdown. Setting
+S3BACKEND=mem will achieve the same result.
 
 ENDPOINT
 ^^^^^^^^^^
@@ -178,7 +215,7 @@ the default 6379.
 In production with Docker
 -------------------------
 
-Using Docker Volume in production
+Using Docker Volumes in production
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Zenko CloudServer runs with a file backend by default.
