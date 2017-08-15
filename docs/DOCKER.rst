@@ -4,8 +4,8 @@ Docker
 -  `Environment Variables <#environment-variables>`__
 -  `Tunables and setup tips <#tunables-and-setup-tips>`__
 -  `Examples for continuous integration with
-   Docker <#continuous-integration-with-docker-hosted-cloudserver>`__
--  `Examples for going in production with Docker <#in-production-with-docker-hosted-cloudserver>`__
+   Docker <#continuous-integration-with-docker-hosted CloudServer>`__
+-  `Examples for going in production with Docker <#in-production-with-docker-hosted CloudServer>`__
 
 Environment Variables
 ---------------------
@@ -43,7 +43,7 @@ To run it with an S3 AWS backend, you will have to add a new section
 
 You will also have to edit your AWS credentials file to be able to use your
 command line tool of choice. This file should only state credentials for S3 AWS
-hosted data, not for your Zenko Cloudserver hosted data.
+hosted data, not for your Zenko CloudServer hosted data.
 As for your locationConfig.json, you will need to mount your AWS credentials
 file at run time:
 ``-v ~/.aws/credentials:/root/.aws/credentials`` on Linux, OS X, or Unix or
@@ -281,8 +281,8 @@ For instance, you can modify these lines in the dockerfile:
     USER scality
     ENTRYPOINT ["/usr/src/app/docker-entrypoint.sh"]
 
-For continuous integration with Docker
---------------------------------------
+Continuous integration with Docker hosted CloudServer
+-----------------------------------------------------
 
 When you start the Docker Scality Zenko CloudServer image, you can adjust the
 configuration of the Scality Zenko CloudServer instance by passing one or more
@@ -294,7 +294,7 @@ Sample ways to run it for CI are:
 
 .. code:: shell
 
-    docker run --name cloudserver -p 8000:8000
+    docker run --name CloudServer -p 8000:8000
     -v $(pwd)/locationConfig.json:/usr/src/app/locationConfig.json
     -v $(pwd)/authdata.json:/usr/src/app/conf/authdata.json
     -v ~/.aws/credentials:/root/.aws/credentials
@@ -305,22 +305,22 @@ environment variables (see `this section <#scality-access-key-id-and-scality-sec
 
 .. code:: shell
 
-    docker run --name cloudserver -p 8000:8000
+    docker run --name CloudServer -p 8000:8000
     -v $(pwd)/locationConfig.json:/usr/src/app/locationConfig.json
     -v ~/.aws/credentials:/root/.aws/credentials 
     -e SCALITY_ACCESS_KEY_ID=accessKey1
     -e SCALITY_SECRET_ACCESS_KEY=verySecretKey1
     -e S3DATA=multiple -e S3BACKEND=mem scality/s3server
 
-In production with Docker
--------------------------
+In production with Docker hosted CloudServer
+--------------------------------------------
 
 In production, we expect that data will be remanent, that you will use the multiple
-backends capabilities of Zenko Cloudserver, and that you will have a custom endpoint
+backends capabilities of Zenko CloudServer, and that you will have a custom endpoint
 for your local storage, and custom credentials for your local storage:
 .. code:: shell
 
-    docker run -d --name cloudserver
+    docker run -d --name CloudServer
     -­v $(pwd)/data:/usr/src/app/localData -­v $(pwd)/metadata:/usr/src/app/localMetadata
     -v $(pwd)/locationConfig.json:/usr/src/app/locationConfig.json
     -v $(pwd)/authdata.json:/usr/src/app/conf/authdata.json
