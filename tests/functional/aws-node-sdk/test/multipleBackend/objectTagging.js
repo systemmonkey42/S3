@@ -19,7 +19,7 @@ const correctMD5 = 'be747eb4b75517bf6b3cf7c5fbb62f3a';
 const emptyMD5 = 'd41d8cd98f00b204e9800998ecf8427e';
 const mpuMD5 = 'e4c2438a8f503658547a77959890dcab-1';
 
-const cloudTimeout = 50000;
+const cloudTimeout = 60000;
 
 let bucketUtil;
 let s3;
