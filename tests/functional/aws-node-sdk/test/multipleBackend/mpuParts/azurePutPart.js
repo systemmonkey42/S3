@@ -25,7 +25,10 @@ let s3;
 
 function checkSubPart(key, expectedParts, cb) {
     azureClient.listBlocks(azureContainerName, key, 'all', (err, list) => {
-        assert.strictEqual(err, null, 'Expected success, got error '
+        console.log('\n\n--------EKY::????? ', key);
+        console.log('\n\n---------EXPECTED partsssssss', expectedParts);
+        console.log('\n\n------CALBBBBBACKCKKKK? ', cb);
+        assert.equal(err, null, 'Expected success, got error '
         `on call to Azure: ${err}`);
         const uncommittedBlocks = list.UncommittedBlocks;
         const committedBlocks = list.CommittedBlocks;
@@ -147,7 +150,7 @@ describeF() {
                         return next(err);
                     });
                 }, err => {
-                    assert.strictEqual(err, null, 'Expected success, '
+                    assert.equal(err, null, 'Expected success, '
                     `got error: ${err}`);
                     checkSubPart(this.test.key, parts, done);
                 });
@@ -177,7 +180,7 @@ describeF() {
                         return next(err);
                     });
                 }, err => {
-                    assert.strictEqual(err, null, 'Expected success, '
+                    assert.equal(err, null, 'Expected success, '
                     `got error: ${err}`);
                     checkSubPart(this.test.key, parts, done);
                 });
