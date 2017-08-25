@@ -126,7 +126,7 @@ describeF() {
             function it(done) {
                 const body = Buffer.alloc(maxSubPartSize + 10);
                 let parts = [];
-                for (let i = 1; i < 6; ) {
+                for (let i = 1; i < 6; i++) {
                     parts = parts.concat([
                       { partnbr: i, subpartnbr: 0 },
                       { partnbr: i, subpartnbr: 1 },
@@ -157,7 +157,7 @@ describeF() {
             function it(done) {
                 const body = Buffer.alloc(10);
                 let parts = [];
-                for (let i = 1; i < 6; ) {
+                for (let i = 1; i < 6; i++) {
                     parts = parts.concat([
                       { partnbr: i, subpartnbr: 0 },
                     ]);
