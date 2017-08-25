@@ -13,6 +13,8 @@ const { createEncryptedBucketPromise } =
 const azureLocation = 'azuretest';
 const azureClient = getAzureClient();
 const azureContainerName = getAzureContainerName();
+const awsLocation = 'aws-test';
+const awsBucket = 'multitester555';
 
 const bucket = 'buckettestmultiplebackendobjectcopy';
 const key = `azureputkey-${Date.now()}`;
@@ -157,6 +159,43 @@ describeSkipIfNotMultiple('MultipleBackend object copy', function testSuite() {
                 });
             });
         });
+
+        it('should copy an object from AWS to Azure', done => {
+            putSourceObj(awsLocation, false, () => {
+                const copyParams = Object.assign({
+                    MetadataDirective: 'REPLACE',
+                    Metadata: {
+                        'scal-location-constraint': azureLocation,
+                    } }, copyParamBase);
+                s3.copyObject(copyParams, (err, result) => {
+                    assert.equal(err, null, 'Expected success but got ' +
+                    `error: ${err}`);
+                    assert.strictEqual(result.CopyObjectResult.ETag,
+                        `"${normalMD5}"`);
+                    assertGetObjects(key, bucket, awsLocation, copyKey, bucket,
+                        azureLocation, copyKey, 'REPLACE', false, done);
+                });
+            });
+        });
+
+        it('should copy an object from Azure to AWS', done => {
+            putSourceObj(azureLocation, false, () => {
+                const copyParams = Object.assign({
+                    MetadataDirective: 'REPLACE',
+                    Metadata: {
+                        'scal-location-constraint': awsLocation,
+                    } }, copyParamBase);
+                s3.copyObject(copyParams, (err, result) => {
+                    assert.equal(err, null, 'Expected success but got ' +
+                    `error: ${err}`);
+                    assert.strictEqual(result.CopyObjectResult.ETag,
+                        `"${normalMD5}"`);
+                    assertGetObjects(key, bucket, azureLocation, copyKey,
+                        bucket, awsLocation, copyKey, 'REPLACE', false, done);
+                });
+            });
+        });
+
 
         it('should copy an object from mem to Azure and retain metadata',
         done => {
