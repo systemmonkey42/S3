@@ -7,7 +7,6 @@ const BucketUtility = require('../../../lib/utility/bucket-util');
 const { expectedETag, uniqName, getAzureClient, getAzureContainerName }
   = require('../utils');
 const { config } = require('../../../../../../lib/Config');
-const constants = require('../../../../../../constants');
 const azureMpuUtils = s3middleware.azureMpuUtils;
 const maxSubPartSize = azureMpuUtils.maxSubPartSize;
 const getBlockId = azureMpuUtils.getBlockId;
@@ -25,10 +24,7 @@ let s3;
 
 function checkSubPart(key, expectedParts, cb) {
     azureClient.listBlocks(azureContainerName, key, 'all', (err, list) => {
-        console.log('\n\n--------EKY::????? ', key);
-        console.log('\n\n---------EXPECTED partsssssss', expectedParts);
-        console.log('\n\n------CALBBBBBACKCKKKK? ', cb);
-        assert.equal(err, null, 'Expected success, got error '
+        assert.equal(err, null, 'Expected success, got error ' +
         `on call to Azure: ${err}`);
         const uncommittedBlocks = list.UncommittedBlocks;
         const committedBlocks = list.CommittedBlocks;
@@ -41,17 +37,17 @@ function checkSubPart(key, expectedParts, cb) {
     });
 }
 
-describeSkipIfNotMultiple.only('MultipleBackend put part to AZURE', function
+describeSkipIfNotMultiple('MultipleBackend put part to AZURE', function
 describeF() {
     this.timeout(250000);
     withV4(sigCfg => {
-        beforeEach(function beforeEachF() {
+        beforeEach(function beforeFn() {
             this.currentTest.key = uniqName(keyObject);
             bucketUtil = new BucketUtility('default', sigCfg);
             s3 = bucketUtil.s3;
         });
         describe('with bucket location header', () => {
-            beforeEach(function beF(done) {
+            beforeEach(function beforeEachFn(done) {
                 async.waterfall([
                     next => s3.createBucket({ Bucket: azureContainerName,
                     }, err => next(err)),
@@ -69,7 +65,7 @@ describeF() {
                 ], done);
             });
 
-            afterEach(function aeF(done) {
+            afterEach(function afterEachFn(done) {
                 async.waterfall([
                     next => s3.abortMultipartUpload({
                         Bucket: azureContainerName,
@@ -81,7 +77,7 @@ describeF() {
                 ], done);
             });
 
-            it('should put 0-byte block to Azure', function it(done) {
+            it('should put 0-byte block to Azure', function itFn(done) {
                 const params = {
                     Bucket: azureContainerName,
                     Key: this.test.key,
@@ -90,7 +86,7 @@ describeF() {
                 };
                 async.waterfall([
                     next => s3.uploadPart(params, (err, res) => {
-                        const eTagExpected = `"${constants.zeroByteETag}"`;
+                        const eTagExpected = `"${azureMpuUtils.zeroByteETag}"`;
                         assert.strictEqual(res.ETag, eTagExpected);
                         return next(err);
                     }),
@@ -104,7 +100,7 @@ describeF() {
                 ], done);
             });
 
-            it('should put 2 blocks to Azure', function it(done) {
+            it('should put 2 blocks to Azure', function itFn(done) {
                 const body = Buffer.alloc(maxSubPartSize + 10);
                 const parts = [{ partnbr: 1, subpartnbr: 0 },
                   { partnbr: 1, subpartnbr: 1 }];
@@ -150,7 +146,7 @@ describeF() {
                         return next(err);
                     });
                 }, err => {
-                    assert.equal(err, null, 'Expected success, '
+                    assert.equal(err, null, 'Expected success, ' +
                     `got error: ${err}`);
                     checkSubPart(this.test.key, parts, done);
                 });
@@ -180,13 +176,13 @@ describeF() {
                         return next(err);
                     });
                 }, err => {
-                    assert.equal(err, null, 'Expected success, '
+                    assert.equal(err, null, 'Expected success, ' +
                     `got error: ${err}`);
                     checkSubPart(this.test.key, parts, done);
                 });
             });
 
-            it('should put twice the same part', function it(done) {
+            it('should put the same part twice', function itFn(done) {
                 const body1 = Buffer.alloc(maxSubPartSize + 10);
                 const body2 = Buffer.alloc(20);
                 const parts2 = [{ partnbr: 1, subpartnbr: 0 },

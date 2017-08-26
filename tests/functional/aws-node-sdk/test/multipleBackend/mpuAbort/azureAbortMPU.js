@@ -21,17 +21,17 @@ const describeSkipIfNotMultiple = (config.backends.data !== 'multiple'
 let bucketUtil;
 let s3;
 
-describeSkipIfNotMultiple('MultipleBackend abort MPU to AZURE', function
+describeSkipIfNotMultiple('Abort MPU on Azure data backend', function
 describeF() {
     this.timeout(250000);
     withV4(sigCfg => {
-        beforeEach(function beforeEachF() {
+        beforeEach(function beforeFn() {
             this.currentTest.key = uniqName(keyObject);
             bucketUtil = new BucketUtility('default', sigCfg);
             s3 = bucketUtil.s3;
         });
         describe('with bucket location header', () => {
-            beforeEach(function beF(done) {
+            beforeEach(function beforeEachFn(done) {
                 async.waterfall([
                     next => s3.createBucket({ Bucket: azureContainerName },
                         err => next(err)),
@@ -53,7 +53,7 @@ describeF() {
                 done));
 
             describe('with one empty part', () => {
-                beforeEach(function beF(done) {
+                beforeEach(function beFn(done) {
                     const params = {
                         Bucket: azureContainerName,
                         Key: this.currentTest.key,
@@ -61,12 +61,12 @@ describeF() {
                         PartNumber: 1,
                     };
                     s3.uploadPart(params, err => {
-                        assert.strictEqual(err, null, 'Expected success, '
+                        assert.strictEqual(err, null, 'Expected success, ' +
                         `got error: ${err}`);
                         return done();
                     });
                 });
-                it('should abort empty part ', function itF(done) {
+                it('should abort empty part ', function itFn(done) {
                     async.waterfall([
                         next => s3.abortMultipartUpload({
                             Bucket: azureContainerName,
@@ -85,7 +85,7 @@ describeF() {
             });
 
             describe('with one part bigger that max subpart', () => {
-                beforeEach(function beF(done) {
+                beforeEach(function beFn(done) {
                     const body = Buffer.alloc(maxSubPartSize + 10);
                     const params = {
                         Bucket: azureContainerName,
@@ -95,13 +95,13 @@ describeF() {
                         Body: body,
                     };
                     s3.uploadPart(params, err => {
-                        assert.strictEqual(err, null, 'Expected success, '
+                        assert.strictEqual(err, null, 'Expected success, ' +
                         `got error: ${err}`);
                         return done();
                     });
                 });
-                it('should delete the key on the Azure side when aborting MPU ',
-                function itF(done) {
+                it('should delete the key on Azure when aborting MPU ',
+                function itFn(done) {
                     async.waterfall([
                         next => s3.abortMultipartUpload({
                             Bucket: azureContainerName,
